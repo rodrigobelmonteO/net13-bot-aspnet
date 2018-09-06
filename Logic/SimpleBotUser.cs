@@ -10,38 +10,61 @@ namespace SimpleBot
 {
     public class SimpleBotUser
     {
+        static string conn = "mongodb://localhost:27017";
+
+        static MongoClient client = new MongoClient(conn);
 
         public static string Reply(Message message)
         {
-            string conn = "mongodb://localhost:27017";
+            var id = message.Id;
+            var profile = GetProfile(id);
 
-            var client = new MongoClient(conn);
+            //var doc = new BsonDocument
+            //{
+            //    {"id", message.Id },
+            //    {"texto", message.Text},
+            //    {"botName", "17" },
+            //    {"User", message.User  }
+            //};
+
+            //    var db = client.GetDatabase("db01");
+            //    var col = db.GetCollection<BsonDocument>("tabela01");
+            //    col.InsertOne(doc);
 
 
-            var doc = new BsonDocument
-            {
-                {"id", message.Id },
-                {"texto", message.Text},
-                {"botName", "17" },
-                {message.User, "Rodrigo"  }
-            };
+            profile.Visitas += 1;
 
-            var db = client.GetDatabase("db01");
-            var col = db.GetCollection<BsonDocument>("tabela01");
+            SetProfile(id, profile);
 
-            col.InsertOne(doc);
-
-            return $"{message.User} disse '{message.Text}'";
-
+            return $"{message.User} disse '{message.Text}' e mandou {profile.Visitas} mensagens";
         }
+
+        //    var db = client.GetDatabase("db01");
+        //    var col = db.GetCollection<BsonDocument>("tabela01");
+
+        //    col.InsertOne(doc);
+
+        //    return $"{message.User} disse '{message.Text}'";
+        //}
 
         public static UserProfile GetProfile(string id)
         {
+            var db = client.GetDatabase("db01");
+            var col = db.GetCollection<BsonDocument>("tabela01");
+            var filtro = Builders<BsonDocument>.Filter.Gt("id", id);
+            var res = col.Find(filtro).ToList();
+
+            var profile = new UserProfile();
+
+
+
+
             return null;
         }
 
         public static void SetProfile(string id, UserProfile profile)
         {
+
         }
     }
 }
