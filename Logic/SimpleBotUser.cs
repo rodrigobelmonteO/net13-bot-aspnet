@@ -10,9 +10,10 @@ namespace SimpleBot
 {
     public class SimpleBotUser
     {
-        static string conn = "mongodb://localhost:27017";
-
-        static MongoClient client = new MongoClient(conn);
+        static SimpleBotUser()
+        {
+            _users = new UserProfileMongoRepository("mongodb://127.0.0.1:27017");
+        }
 
         public static string Reply(Message message)
         {
